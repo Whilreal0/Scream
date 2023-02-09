@@ -1,7 +1,5 @@
 <template>
-  <v-navigation-drawer  app dark v-model="drawer"  >
-
-       
+  <v-navigation-drawer app dark v-model="computedDrawer">
     <v-list-item>
       <v-list-item-avatar>
         <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
@@ -30,13 +28,37 @@
 
 <script>
 export default {
-    props: ['drawer'],
-    data:()=>({
-        items: [
-          { title: 'Home', icon: 'mdi-view-dashboard' },
-          { title: 'About', icon: 'mdi-forum' },
-        ],
-    })
+  props: ["drawer"],
+  data: () => ({
+    items: [
+      { title: "Home", icon: "mdi-view-dashboard" },
+      { title: "About", icon: "mdi-forum" },
+    ],
+    
+  }),
+    mounted() {
+    window.addEventListener('resize', this.checkScreenSize);
+  },
+  computed: {
+  computedDrawer: {
+    get() {
+      return this.drawer;
+    },
+    set (value) {
+      this.$emit('update:drawer', value);
+    }
+  }
+},
+  methods: {
+    
+    checkScreenSize() {
+      if (window.innerWidth < 960) {
+        this.$emit('update:drawer', false);
+      } else {
+        this.$emit('update:drawer', true);
+      }
+    }
+  }
 };
 </script>
 
