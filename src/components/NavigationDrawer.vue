@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app dark v-model="computedDrawer">
+  <v-navigation-drawer app dark v-model="drawerData" :disable-resize-watcher="false">
     <v-list-item>
       <v-list-item-avatar>
         <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
+
 export default {
   props: ["drawer"],
   data: () => ({
@@ -34,28 +36,38 @@ export default {
       { title: "Home", icon: "mdi-view-dashboard" },
       { title: "About", icon: "mdi-forum" },
     ],
-    
   }),
-    mounted() {
-    window.addEventListener('resize', this.checkScreenSize);
-  },
   computed: {
-  computedDrawer: {
-    get() {
-      return this.drawer;
+    ...mapState({
+      drawerData: state => state.drawerData
+    }),
+    isMobile() {
+      return this.$vuetify.breakpoint.smAndDown
     },
-    set (value) {
-      this.$emit('update:drawer', value);
+    drawerData: {
+      get() {
+        return this.$store.state.drawer;
+      },
+      set(value) {
+        this.$store.commit('setDrawer', value);
+      }
     }
-  }
-},
-  methods: {
     
+  },
+  watch: {
+    isMobile() {
+      this.checkScreenSize()
+    }
+  },
+  mounted() {
+    this.checkScreenSize()
+  },
+  methods: {
     checkScreenSize() {
-      if (window.innerWidth < 960) {
-        this.$emit('update:drawer', false);
+      if (this.isMobile) {
+        this.$store.commit('updateDrawer', false)
       } else {
-        this.$emit('update:drawer', true);
+        this.$store.commit('updateDrawer', true)
       }
     }
   }
