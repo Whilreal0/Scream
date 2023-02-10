@@ -1,7 +1,7 @@
 <template>
   <div class="pa-5">
     <v-card class="pa-5 mx-auto" max-width="500px">
-      <v-form ref="form" v-model="valid" lazy-validation>
+      <v-form @submit.prevent="handleSubmit" ref="form" v-model="valid" >
         <v-text-field
           v-model="username"
           :counter="10"
@@ -27,13 +27,15 @@
           counter
           @click:append="show = !show"
         ></v-text-field>
-        <v-btn block class="" >Sign Up</v-btn>
+        <v-btn type="submit" block class="" >Sign Up</v-btn>
       </v-form>
     </v-card>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   data: () => ({
     valid: true,
@@ -56,6 +58,18 @@ export default {
         },
   }),
 
-  methods: {},
+  methods: {
+    ...mapActions(['signUp']),
+    handleSubmit(){
+      this.signUp({email: this.email, username: this.username, password: this.password, }).then(()=>{
+        this.$router.replace('/sign-in')
+        alert('register success')
+      })
+      .catch((err)=>{
+        console.log(err);
+      })
+    },
+    
+  },
 };
 </script>
